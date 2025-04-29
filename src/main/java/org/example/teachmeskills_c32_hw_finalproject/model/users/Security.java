@@ -1,4 +1,4 @@
-package org.example.teachmeskills_c32_hw_finalproject.model;
+package org.example.teachmeskills_c32_hw_finalproject.model.users;
 
 
 

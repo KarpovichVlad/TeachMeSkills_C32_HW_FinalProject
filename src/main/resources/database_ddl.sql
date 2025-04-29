@@ -1,19 +1,42 @@
-create table public.books
+-- Таблица пользователей
+create table public.users
 (
-    id           bigserial
+    id               bigserial
         primary key,
-    title        varchar(255) not null,
-    author       varchar(255) not null,
-    genre        varchar(100),
-    description  text,
-    release_year integer
+    firstname        varchar(20)  not null,
+    second_name      varchar(20)  not null,
+    age              integer,
+    email            varchar(255) not null
+        unique,
+    sex              varchar(10),
+    telephone_number varchar(12),
+    created          timestamp default CURRENT_TIMESTAMP,
+    updated          timestamp default CURRENT_TIMESTAMP
 );
 
-alter table public.books
-    owner to postgres;
+alter table public.users
+    owner to dog_101;
 
+-- Таблица безопасности (логины, пароли, роли)
+create table public.security
+(
+    id       bigserial
+        primary key,
+    login    varchar(255) not null,
+    password varchar(255) not null,
+    role     varchar(50)  not null,
+    created  timestamp default CURRENT_TIMESTAMP,
+    updated  timestamp default CURRENT_TIMESTAMP,
+    user_id  bigint
+        unique
+        references public.users
+            on delete cascade
+);
 
+alter table public.security
+    owner to dog_101;
 
+-- Таблица отзывов на книги
 create table public.reviews
 (
     id         bigserial
@@ -33,42 +56,37 @@ create table public.reviews
 );
 
 alter table public.reviews
-    owner to postgres;
+    owner to dog_101;
 
-create table public.security
+-- Таблица книг
+create table public.books
 (
-    id       bigserial
+    id           bigint default nextval('books_id_seq'::regclass) not null
         primary key,
-    login    varchar(255) not null,
-    password varchar(255) not null,
-    role     varchar(50)  not null,
-    created  timestamp default CURRENT_TIMESTAMP,
-    updated  timestamp default CURRENT_TIMESTAMP,
-    user_id  bigint
+    title        varchar(255)                                     not null,
+    author       varchar(255)                                     not null,
+    genre        varchar(100),
+    description  text,
+    release_year integer
+);
+
+alter table public.books
+    owner to dog_101;
+
+-- Таблица файлов книг (PDF, EPUB и т.д.)
+create table public.book_files
+(
+    id        bigint default nextval('book_files_id_seq'::regclass) not null
+        primary key,
+    book_id   bigint
         unique
-        references public.users
-            on delete cascade
+        references public.books
+            on delete cascade,
+    file_name varchar(255)                                          not null
 );
 
-alter table public.security
-    owner to postgres;
+alter table public.book_files
+    owner to dog_101;
 
-create table public.users
-(
-    id               bigserial
-        primary key,
-    firstname        varchar(20)  not null,
-    second_name      varchar(20)  not null,
-    age              integer,
-    email            varchar(255) not null
-        unique,
-    sex              varchar(10),
-    telephone_number varchar(12),
-    created          timestamp default CURRENT_TIMESTAMP,
-    updated          timestamp default CURRENT_TIMESTAMP
-);
-
-alter table public.users
-    owner to postgres;
 
 

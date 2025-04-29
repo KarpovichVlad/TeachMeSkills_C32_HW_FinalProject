@@ -1,4 +1,4 @@
-package org.example.teachmeskills_c32_hw_finalproject.model;
+package org.example.teachmeskills_c32_hw_finalproject.model.books;
 
 
 import jakarta.persistence.Column;
@@ -19,9 +19,10 @@ import org.springframework.stereotype.Component;
 @Builder
 @Component
 public class Book {
+
     @Id
-    @SequenceGenerator(name = "book_seq_gen", sequenceName = "books_id_seq", allocationSize = 1)
-    @GeneratedValue(generator = "book_seq_gen")
+    @SequenceGenerator(name = "books_seq_gen", sequenceName = "books_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "books_seq_gen")
     private Long id;
 
     @Column(nullable = false)
@@ -38,5 +39,6 @@ public class Book {
     @Column(name = "release_year")
     private Integer releaseYear;
 }
+
 
 
