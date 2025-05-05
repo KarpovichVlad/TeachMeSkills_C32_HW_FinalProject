@@ -16,29 +16,28 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     }
 
-    public Boolean createReview(Review review) {
-        try{
+    public boolean createReview(Review review) {
+        try {
             reviewRepository.save(review);
-        }catch(Exception e){
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
     public Optional<Review> updateReview(Review review) {
         return Optional.of(reviewRepository.save(review));
     }
 
-    public Optional<Review> getReviewById(Long id) {
-        return reviewRepository.findById(id);
+    public boolean deleteReview(Long reviewId) {
+        if (reviewRepository.existsById(reviewId)) {
+            reviewRepository.deleteById(reviewId);
+            return true;
+        }
+        return false;
     }
 
-    public Boolean deleteReview(Long id) {
-        reviewRepository.deleteById(id);
-        return !reviewRepository.existsById(id);
-    }
-
-    public List<Review> getAllReviews(){
-        return reviewRepository.findAll();
+    public List<Review> getReviewsByBookId(Long bookId) {
+        return reviewRepository.findAllByBookId(bookId);
     }
 }
