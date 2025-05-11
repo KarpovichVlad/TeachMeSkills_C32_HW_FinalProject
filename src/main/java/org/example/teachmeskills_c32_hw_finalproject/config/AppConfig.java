@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@EnableWebMvc //Включаем Interceptor и Validation
+@EnableWebMvc
 @ComponentScan("org.example.teachmeskills_c32_hw_finalproject")
 @Configuration
 public class AppConfig implements WebMvcConfigurer {

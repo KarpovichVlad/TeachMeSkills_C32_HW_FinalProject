@@ -1,5 +1,6 @@
 package org.example.teachmeskills_c32_hw_finalproject.service;
 
+import org.example.teachmeskills_c32_hw_finalproject.annotation.LogExecutionTime;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Book;
 import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class BookService {
         return true;
     }
 
+    @LogExecutionTime
     public Optional<Book> updateBook(Book book) {
         try {
             return Optional.of(bookRepository.save(book));
@@ -52,6 +54,7 @@ public class BookService {
         return !bookRepository.existsById(id);
     }
 
+    @LogExecutionTime
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
