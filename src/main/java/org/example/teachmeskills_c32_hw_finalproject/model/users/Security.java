@@ -8,16 +8,18 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity(name = "security")
 @Data
@@ -41,21 +43,15 @@ public class Security {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created", updatable = false)
-    private Timestamp created;
+    private Date createdAt;
 
-    @Column(name = "updated", insertable = false)
-    private Timestamp updated;
-
-    @PrePersist
-    protected void onCreate() {
-        created = new Timestamp(System.currentTimeMillis());
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updated = new Timestamp(System.currentTimeMillis());
-    }
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated")
+    private Date updatedAt;
 
     @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;

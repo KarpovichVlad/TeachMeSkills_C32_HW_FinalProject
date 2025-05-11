@@ -45,7 +45,7 @@ create table public.reviews
     rating     double precision not null
         constraint reviews_rating_check
             check ((rating >= (1.0)::double precision) AND (rating <= (10.0)::double precision)),
-    created_at timestamp default CURRENT_TIMESTAMP,
+    created timestamp default CURRENT_TIMESTAMP,
     user_id    bigint
         references public.users
             on delete cascade,

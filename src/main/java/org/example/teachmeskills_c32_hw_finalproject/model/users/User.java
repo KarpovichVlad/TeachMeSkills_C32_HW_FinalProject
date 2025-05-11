@@ -4,16 +4,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity(name = "users")
 @Data
@@ -43,20 +45,14 @@ public class User {
     @Column(name = "telephone_number", length = 12)
     private String telephoneNumber;
 
-    @Column(updatable = false)
-    private Timestamp created;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created", updatable = false)
+    private Date createdAt;
 
-    @Column(insertable = false)
-    private Timestamp updated;
-
-    @PrePersist
-    protected void onCreate() {
-        created = new Timestamp(System.currentTimeMillis());
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updated = new Timestamp(System.currentTimeMillis());
-    }
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated")
+    private Date updatedAt;
 }
 

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,47 +25,41 @@ public class BookFileService {
         return ROOT_FILE_PATH.resolve(bookId.toString());
     }
 
-    public Boolean uploadFile(Long bookId, MultipartFile file) {
+    public boolean uploadFile(Long bookId, MultipartFile file) {
         try {
-            if (file.getOriginalFilename() == null) {
-                return false;
-            }
+            if (file.getOriginalFilename() == null) return false;
+
             Path bookPath = getBookPath(bookId);
-            Files.createDirectories(bookPath); // Создаём папку для книги, если её нет
-            Files.copy(file.getInputStream(), bookPath.resolve(file.getOriginalFilename()));
-        } catch (IOException exception) {
+            Files.createDirectories(bookPath);
+
+            Path destination = bookPath.resolve(file.getOriginalFilename());
+            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+            return true;
+        } catch (IOException e) {
             return false;
         }
-        return true;
     }
 
     public Optional<Resource> getFile(Long bookId, String fileName) {
         Path path = getBookPath(bookId).resolve(fileName);
         Resource resource = new PathResource(path);
-        if (resource.exists()) {
-            return Optional.of(resource);
-        }
-        return Optional.empty();
+        return resource.exists() ? Optional.of(resource) : Optional.empty();
     }
 
-    public ArrayList<String> getListOfFiles(Long bookId) throws IOException {
+    public List<String> getListOfFiles(Long bookId) throws IOException {
         Path path = getBookPath(bookId);
-        if (!Files.exists(path)) {
-            return new ArrayList<>();
-        }
-        return (ArrayList<String>) Files
-                .walk(path, 1)
-                .filter(p -> !p.equals(path))
-                .map(p -> p.getFileName().toString())
-                .collect(Collectors.toList());
-    }
+        if (!Files.exists(path)) return new ArrayList<>();
 
-    public Boolean deleteFile(Long bookId, String fileName) {
-        Path path = getBookPath(bookId).resolve(fileName);
-        File file = new File(path.toString());
-        if (file.exists()) {
-            return file.delete();
+        try (var stream = Files.list(path)) {
+            return stream
+                    .filter(Files::isRegularFile)
+                    .map(p -> p.getFileName().toString())
+                    .collect(Collectors.toList());
         }
-        return false;
+    }
+    public boolean deleteFile(Long bookId, String fileName) {
+        Path path = getBookPath(bookId).resolve(fileName);
+        File file = path.toFile();
+        return file.exists() && file.delete();
     }
 }

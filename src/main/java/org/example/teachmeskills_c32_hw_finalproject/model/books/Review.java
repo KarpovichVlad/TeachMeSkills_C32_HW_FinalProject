@@ -6,17 +6,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity(name = "reviews")
 @Data
@@ -29,8 +31,8 @@ import java.time.LocalDateTime;
 })
 public class Review {
     @Id
-    @SequenceGenerator(name = "review_seq_gen", sequenceName = "review_id_seq", allocationSize = 1)
-    @GeneratedValue(generator = "review_seq_gen")
+    @SequenceGenerator(name = "reviews_seq_gen", sequenceName = "reviews_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "reviews_seq_gen")
     private Long id;
 
     @Column(length = 2000)
@@ -45,11 +47,9 @@ public class Review {
     @Column(name = "book_id", nullable = false)
     private Long bookId;
 
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created", updatable = false)
+    private Date createdAt;
 }
 

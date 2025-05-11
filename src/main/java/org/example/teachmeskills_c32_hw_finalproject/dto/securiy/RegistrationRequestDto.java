@@ -1,4 +1,4 @@
-package org.example.teachmeskills_c32_hw_finalproject.model.dto;
+package org.example.teachmeskills_c32_hw_finalproject.dto.securiy;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

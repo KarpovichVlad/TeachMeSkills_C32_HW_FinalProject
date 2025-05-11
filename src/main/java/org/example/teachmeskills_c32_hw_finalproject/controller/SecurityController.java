@@ -2,7 +2,10 @@ package org.example.teachmeskills_c32_hw_finalproject.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.example.teachmeskills_c32_hw_finalproject.model.dto.RegistrationRequestDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.RegistrationRequestDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
+import org.example.teachmeskills_c32_hw_finalproject.exception.EmailUserException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.LoginUsedException;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
 import org.example.teachmeskills_c32_hw_finalproject.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ import java.util.Optional;
 @Tag(name = "Security Controller", description = "Управление регистрацией")
 public class SecurityController {
 
-    public SecurityService securityService;
+    private final SecurityService securityService;
 
     @Autowired
     public SecurityController(SecurityService securityService) {
@@ -29,14 +32,14 @@ public class SecurityController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<User> registration(@RequestBody @Valid RegistrationRequestDto requestDto, BindingResult bindingResult)  {
+    public ResponseEntity<UserDto> registration(@RequestBody @Valid RegistrationRequestDto requestDto, BindingResult bindingResult) throws LoginUsedException, EmailUserException {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Optional<User> user = securityService.registration(requestDto);
-        if (user.isEmpty()) {
+        Optional<UserDto> userDto = securityService.registration(requestDto);
+        if (userDto.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(user.get(), HttpStatus.CREATED);
+        return new ResponseEntity<>(userDto.get(), HttpStatus.CREATED);
     }
 }
