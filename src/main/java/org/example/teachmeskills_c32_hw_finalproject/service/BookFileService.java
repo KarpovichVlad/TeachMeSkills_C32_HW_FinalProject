@@ -1,5 +1,7 @@
 package org.example.teachmeskills_c32_hw_finalproject.service;
 
+import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -20,15 +22,26 @@ import java.util.stream.Collectors;
 public class BookFileService {
 
     private final Path ROOT_FILE_PATH = Paths.get("data");
+    private final BookRepository bookRepository;
+
+    @Autowired
+    public BookFileService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     private Path getBookPath(Long bookId) {
         return ROOT_FILE_PATH.resolve(bookId.toString());
     }
 
-    public boolean uploadFile(Long bookId, MultipartFile file) {
-        try {
-            if (file.getOriginalFilename() == null) return false;
+    private boolean bookExists(Long bookId) {
+        return bookRepository.existsById(bookId);
+    }
 
+    public boolean uploadFile(Long bookId, MultipartFile file) {
+        if (!bookExists(bookId) || file.getOriginalFilename() == null)
+            return false;
+
+        try {
             Path bookPath = getBookPath(bookId);
             Files.createDirectories(bookPath);
 
@@ -41,12 +54,16 @@ public class BookFileService {
     }
 
     public Optional<Resource> getFile(Long bookId, String fileName) {
+        if (!bookExists(bookId)) return Optional.empty();
+
         Path path = getBookPath(bookId).resolve(fileName);
         Resource resource = new PathResource(path);
         return resource.exists() ? Optional.of(resource) : Optional.empty();
     }
 
     public List<String> getListOfFiles(Long bookId) throws IOException {
+        if (!bookExists(bookId)) return new ArrayList<>();
+
         Path path = getBookPath(bookId);
         if (!Files.exists(path)) return new ArrayList<>();
 
@@ -57,7 +74,10 @@ public class BookFileService {
                     .collect(Collectors.toList());
         }
     }
+
     public boolean deleteFile(Long bookId, String fileName) {
+        if (!bookExists(bookId)) return false;
+
         Path path = getBookPath(bookId).resolve(fileName);
         File file = path.toFile();
         return file.exists() && file.delete();

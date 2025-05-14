@@ -2,6 +2,8 @@ package org.example.teachmeskills_c32_hw_finalproject.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
 import org.example.teachmeskills_c32_hw_finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +33,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<HttpStatus> createUser(@RequestBody User user) {
-        Boolean createdUser = userService.createUser(user);
-        if (!createdUser) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") @Parameter(description = "User id") Long id) {
         Optional<User> user = userService.getUserById(id);
@@ -49,9 +42,12 @@ public class UserController {
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        Optional<User> userUpdated = userService.updateUser(user);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserUpdateDto dto
+    ) {
+        Optional<UserDto> userUpdated = userService.updateUser(id, dto);
         if (userUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

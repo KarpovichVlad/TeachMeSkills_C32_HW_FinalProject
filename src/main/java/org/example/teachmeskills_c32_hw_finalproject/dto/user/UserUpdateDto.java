@@ -11,13 +11,11 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Builder
 @Component
-public class UserDto {
-    private Long id;
+public class UserUpdateDto {
     private String firstname;
     private String secondName;
     private Integer age;
-    private String email;
     private String sex;
     private String telephoneNumber;
-
 }
+

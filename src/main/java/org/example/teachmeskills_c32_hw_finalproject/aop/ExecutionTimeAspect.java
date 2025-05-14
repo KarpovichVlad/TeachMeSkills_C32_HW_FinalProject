@@ -16,13 +16,9 @@ public class ExecutionTimeAspect {
     @Around("@annotation(org.example.teachmeskills_c32_hw_finalproject.annotation.LogExecutionTime)")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
-
         Object proceed = joinPoint.proceed();
-
         long executionTime = System.currentTimeMillis() - start;
-
         log.info("{} выполнен за {} мс", joinPoint.getSignature(), executionTime);
-
         return proceed;
     }
 }

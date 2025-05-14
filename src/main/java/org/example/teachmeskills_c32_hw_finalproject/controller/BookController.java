@@ -1,5 +1,7 @@
 package org.example.teachmeskills_c32_hw_finalproject.controller;
 
+import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookCreateDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Book;
 import org.example.teachmeskills_c32_hw_finalproject.service.BookService;
 import org.springframework.http.HttpStatus;
@@ -26,12 +28,12 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> createBook(@RequestBody Book book) {
-        Boolean createdBook = bookService.createBook(book);
-        if (!createdBook) {
+    public ResponseEntity<Book> createBook(@RequestBody BookCreateDto bookDto) {
+        Optional<Book> createdBook = bookService.createBook(bookDto);
+        if (createdBook.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(createdBook.get(), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -43,14 +45,18 @@ public class BookController {
         return new ResponseEntity<>(book.get(), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<Book> updateBook(@RequestBody Book book) {
-        Optional<Book> bookUpdated = bookService.updateBook(book);
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(
+            @PathVariable Long id,
+            @RequestBody BookUpdateDto dto
+    ) {
+        Optional<Book> bookUpdated = bookService.updateBook(id, dto);
         if (bookUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(bookUpdated.get(), HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteBook(@PathVariable("id") Long bookId) {
@@ -60,7 +66,8 @@ public class BookController {
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    @GetMapping
+
+    @GetMapping("/list")
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookService.getAllBooks();
         if (books.isEmpty()) {

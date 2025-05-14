@@ -1,5 +1,8 @@
 package org.example.teachmeskills_c32_hw_finalproject.service;
 
+import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewResponseDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Review;
 import org.example.teachmeskills_c32_hw_finalproject.repository.ReviewRepository;
 import org.slf4j.Logger;
@@ -19,24 +22,47 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     }
 
-    public boolean createReview(Review review) {
+    public Optional<ReviewDto> createReview(Review review) {
         try {
-            reviewRepository.save(review);
+            Review saved = reviewRepository.save(review);
+
+            return Optional.of(ReviewDto.builder()
+                    .id(saved.getId())
+                    .text(saved.getText())
+                    .rating(saved.getRating())
+                    .build()
+            );
         } catch (Exception e) {
             log.error("Ошибка при создании отзыва: {}", e.getMessage());
-            return false;
+            return Optional.empty();
         }
-        return true;
     }
 
-    public Optional<Review> updateReview(Review review) {
+
+    public Optional<ReviewResponseDto> updateReview(Long bookId, Long reviewId, ReviewUpdateDto dto) {
+        Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
+        if (reviewOpt.isEmpty() || !reviewOpt.get().getBookId().equals(bookId)) {
+            return Optional.empty();
+        }
+
+        Review review = reviewOpt.get();
+        review.setText(dto.getText());
+        review.setRating(dto.getRating());
+
         try {
-            return Optional.of(reviewRepository.save(review));
+            Review updated = reviewRepository.save(review);
+            return Optional.of(
+                    ReviewResponseDto.builder()
+                            .text(updated.getText())
+                            .rating(updated.getRating())
+                            .build()
+            );
         } catch (Exception e) {
             log.error("Ошибка при обновлении отзыва: {}", e.getMessage());
             return Optional.empty();
         }
     }
+
 
     public boolean deleteReview(Long reviewId) {
         try {

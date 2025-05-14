@@ -33,7 +33,7 @@ public class BookFileController {
         return new ResponseEntity<>(result ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<String>> getFiles(@PathVariable Long bookId) {
         try {
             List<String> files = bookFileService.getListOfFiles(bookId);
@@ -54,7 +54,8 @@ public class BookFileController {
         Optional<Resource> file = bookFileService.getFile(bookId, fileName);
         return file.map(resource -> {
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getFilename());
+            headers.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
             return new ResponseEntity<>(resource, headers, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

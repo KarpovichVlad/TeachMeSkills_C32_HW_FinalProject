@@ -1,5 +1,7 @@
 package org.example.teachmeskills_c32_hw_finalproject.service;
 
+import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
 import org.example.teachmeskills_c32_hw_finalproject.repository.UserRepository;
 import org.slf4j.Logger;
@@ -19,23 +21,39 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public boolean createUser(User user) {
-        try {
-            userRepository.save(user);
-        } catch (Exception e) {
-            log.error("Ошибка при создании пользователя: {}", e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    public Optional<User> updateUser(User user) {
+    private UserDto convertToDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .secondName(user.getSecondName())
+                .age(user.getAge())
+                .sex(user.getSex())
+                .email(user.getEmail())
+                .telephoneNumber(user.getTelephoneNumber())
+                .build();
+    }
+
+    public Optional<UserDto> updateUser(Long id, UserUpdateDto dto) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            log.warn("Пользователь с ID {} не найден для обновления", id);
+            return Optional.empty();
+        }
+
+        User user = userOpt.get();
+        user.setFirstname(dto.getFirstname());
+        user.setSecondName(dto.getSecondName());
+        user.setAge(dto.getAge());
+        user.setSex(dto.getSex());
+        user.setTelephoneNumber(dto.getTelephoneNumber());
+
         try {
-            return Optional.of(userRepository.save(user));
+            User updated = userRepository.save(user);
+            return Optional.of(convertToDto(updated));
         } catch (Exception e) {
             log.error("Ошибка при обновлении пользователя: {}", e.getMessage());
             return Optional.empty();

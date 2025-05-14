@@ -1,5 +1,8 @@
 package org.example.teachmeskills_c32_hw_finalproject.controller;
 
+import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewResponseDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Review;
 import org.example.teachmeskills_c32_hw_finalproject.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping("list")
+    @GetMapping("/list")
     public ResponseEntity<List<Review>> getAllReviewsByBookId(@PathVariable Long bookId) {
         List<Review> reviews = reviewService.getReviewsByBookId(bookId);
         if (reviews.isEmpty()) {
@@ -31,30 +34,34 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> createReview(@PathVariable Long bookId, @RequestBody Review review) {
-        review.setBookId(bookId);
-        boolean created = reviewService.createReview(review);
-        if (!created) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{reviewId}")
-    public ResponseEntity<Review> updateReview(
+    public ResponseEntity<ReviewDto> createReview(
             @PathVariable Long bookId,
-            @PathVariable Long reviewId,
             @RequestBody Review review
     ) {
-        review.setId(reviewId);
         review.setBookId(bookId);
+        Optional<ReviewDto> createdReview = reviewService.createReview(review);
 
-        Optional<Review> updatedReview = reviewService.updateReview(review);
+        if (createdReview.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdReview.get());
+    }
+
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> updateReview(
+            @PathVariable Long bookId,
+            @PathVariable Long reviewId,
+            @RequestBody ReviewUpdateDto dto
+    ) {
+        Optional<ReviewResponseDto> updatedReview = reviewService.updateReview(bookId, reviewId, dto);
         if (updatedReview.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(updatedReview.get(), HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<HttpStatus> deleteReview(@PathVariable Long reviewId) {
