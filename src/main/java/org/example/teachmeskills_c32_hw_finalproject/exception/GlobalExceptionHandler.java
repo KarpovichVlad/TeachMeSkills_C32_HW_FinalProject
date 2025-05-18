@@ -1,5 +1,10 @@
 package org.example.teachmeskills_c32_hw_finalproject.exception;
 
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.ReviewAlreadyExistsException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.userex.EmailUserException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.userex.LoginUsedException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.userex.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,10 +28,28 @@ public class GlobalExceptionHandler {
         log.error(exception.getMessage());
         return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<String> handleBookNotFound(BookNotFoundException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewAlreadyExistsException.class)
+    public ResponseEntity<String> handleReviewAlreadyExists(ReviewAlreadyExistsException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+    }
     // Прочие исключения
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<String> defaultExceptionHandler(Exception exception) {
-        log.error("Unexpected error: " + exception.getMessage());
-        return new ResponseEntity<>("Произошла ошибка. Пожалуйста, повторите попытку позже.", HttpStatus.INTERNAL_SERVER_ERROR);
+        log.error("Unexpected error: {}", exception.getMessage());
+        return new ResponseEntity<>("An error has occurred. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

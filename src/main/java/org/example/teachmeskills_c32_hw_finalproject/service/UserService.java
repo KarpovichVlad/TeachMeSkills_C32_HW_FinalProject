@@ -2,6 +2,7 @@ package org.example.teachmeskills_c32_hw_finalproject.service;
 
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserUpdateDto;
+import org.example.teachmeskills_c32_hw_finalproject.exception.userex.UserNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
 import org.example.teachmeskills_c32_hw_finalproject.repository.UserRepository;
 import org.slf4j.Logger;
@@ -22,7 +23,12 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            log.warn("Пользователь с ID {} не найден", id);
+            throw new UserNotFoundException(id);
+        }
+        return user;
     }
 
     private UserDto convertToDto(User user) {
@@ -41,7 +47,7 @@ public class UserService {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
             log.warn("Пользователь с ID {} не найден для обновления", id);
-            return Optional.empty();
+            throw new UserNotFoundException(id);
         }
 
         User user = userOpt.get();
@@ -61,6 +67,10 @@ public class UserService {
     }
 
     public boolean deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            log.warn("Пользователь с ID {} не найден для удаления", id);
+            throw new UserNotFoundException(id);
+        }
         try {
             userRepository.deleteById(id);
         } catch (Exception e) {

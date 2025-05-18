@@ -3,6 +3,7 @@ package org.example.teachmeskills_c32_hw_finalproject.service;
 import org.example.teachmeskills_c32_hw_finalproject.annotation.LogExecutionTime;
 import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookCreateDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookUpdateDto;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Book;
 import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class BookService {
         Optional<Book> bookOpt = bookRepository.findById(id);
         if (bookOpt.isEmpty()) {
             log.warn("Книга с ID {} не найдена для обновления", id);
-            return Optional.empty();
+            throw new BookNotFoundException(id);
         }
 
         Book book = bookOpt.get();
@@ -65,10 +66,19 @@ public class BookService {
     }
 
     public Optional<Book> getBookById(Long id) {
-        return bookRepository.findById(id);
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
+            log.warn("Книга с ID {} не найдена", id);
+            throw new BookNotFoundException(id);
+        }
+        return book;
     }
 
     public boolean deleteBook(Long id) {
+        if (!bookRepository.existsById(id)) {
+            log.warn("Книга с ID {} не найдена для удаления", id);
+            throw new BookNotFoundException(id);
+        }
         try {
             bookRepository.deleteById(id);
         } catch (Exception e) {

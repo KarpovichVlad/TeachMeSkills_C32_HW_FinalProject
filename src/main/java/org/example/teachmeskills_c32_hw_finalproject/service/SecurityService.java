@@ -2,8 +2,8 @@ package org.example.teachmeskills_c32_hw_finalproject.service;
 
 import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.RegistrationRequestDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
-import org.example.teachmeskills_c32_hw_finalproject.exception.EmailUserException;
-import org.example.teachmeskills_c32_hw_finalproject.exception.LoginUsedException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.userex.EmailUserException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.userex.LoginUsedException;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.Role;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.Security;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;

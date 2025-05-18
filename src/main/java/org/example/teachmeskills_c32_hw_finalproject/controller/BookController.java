@@ -60,7 +60,7 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteBook(@PathVariable("id") Long bookId) {
-        Boolean bookDeleted = bookService.deleteBook(bookId);
+        boolean bookDeleted = bookService.deleteBook(bookId);
         if (!bookDeleted) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
