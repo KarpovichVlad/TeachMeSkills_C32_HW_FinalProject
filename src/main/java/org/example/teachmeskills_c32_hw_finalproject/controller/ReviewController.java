@@ -64,8 +64,8 @@ public class ReviewController {
 
 
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<HttpStatus> deleteReview(@PathVariable Long reviewId) {
-        boolean deleted = reviewService.deleteReview(reviewId);
+    public ResponseEntity<HttpStatus> deleteReview(@PathVariable Long bookId, @PathVariable Long reviewId) {
+        boolean deleted = reviewService.deleteReview(bookId, reviewId);
         if (!deleted) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

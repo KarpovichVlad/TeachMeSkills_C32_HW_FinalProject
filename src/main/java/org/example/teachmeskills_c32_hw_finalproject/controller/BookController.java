@@ -75,4 +75,13 @@ public class BookController {
         }
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
+
+    @GetMapping("/list/{genre}")
+    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable String genre) {
+        List<Book> books = bookService.getBooksByGenre(genre);
+        if (books.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
 }

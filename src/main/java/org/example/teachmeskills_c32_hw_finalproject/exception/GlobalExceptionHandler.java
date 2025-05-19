@@ -1,7 +1,10 @@
 package org.example.teachmeskills_c32_hw_finalproject.exception;
 
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.FileNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.GenreNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.ReviewAlreadyExistsException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.ReviewNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.EmailUserException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.LoginUsedException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.UserNotFoundException;
@@ -12,44 +15,73 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(value = LoginUsedException.class)
-    public ResponseEntity<String> loginUsedExceptionHandler(LoginUsedException exception) {
-        log.error(exception.getMessage());
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    private Map<String, Object> generateResponse(String message) {
+        return Map.of(
+                "timestamp", LocalDateTime.now(),
+                "message", message
+        );
     }
 
-    @ExceptionHandler(value = EmailUserException.class)
-    public ResponseEntity<String> emailUserExceptionHandler(EmailUserException exception) {
+    @ExceptionHandler(LoginUsedException.class)
+    public ResponseEntity<?> loginUsedExceptionHandler(LoginUsedException exception) {
         log.error(exception.getMessage());
-        return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailUserException.class)
+    public ResponseEntity<?> emailUserExceptionHandler(EmailUserException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(UserNotFoundException exception) {
+    public ResponseEntity<?> handleUserNotFound(UserNotFoundException exception) {
         log.error(exception.getMessage());
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<String> handleBookNotFound(BookNotFoundException exception) {
+    public ResponseEntity<?> handleBookNotFound(BookNotFoundException exception) {
         log.error(exception.getMessage());
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(GenreNotFoundException.class)
+    public ResponseEntity<?> handleGenreNotFound(GenreNotFoundException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<?> handleFileNotFound(FileNotFoundException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<?> handleReviewNotFound(ReviewNotFoundException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ReviewAlreadyExistsException.class)
-    public ResponseEntity<String> handleReviewAlreadyExists(ReviewAlreadyExistsException exception) {
+    public ResponseEntity<?> handleReviewAlreadyExists(ReviewAlreadyExistsException exception) {
         log.error(exception.getMessage());
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.CONFLICT);
     }
+
     // Прочие исключения
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<String> defaultExceptionHandler(Exception exception) {
-        log.error("Unexpected error: {}", exception.getMessage());
-        return new ResponseEntity<>("An error has occurred. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> defaultExceptionHandler(Exception exception) {
+        log.error("Unexpected error: {}", exception.getMessage(), exception);
+        return new ResponseEntity<>(generateResponse("Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

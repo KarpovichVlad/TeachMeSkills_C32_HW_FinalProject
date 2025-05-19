@@ -4,6 +4,7 @@ import org.example.teachmeskills_c32_hw_finalproject.annotation.LogExecutionTime
 import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookCreateDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.GenreNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Book;
 import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
 import org.slf4j.LoggerFactory;
@@ -91,5 +92,14 @@ public class BookService {
     @LogExecutionTime
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    public List<Book> getBooksByGenre(String genre) {
+        List<Book> books = bookRepository.findByGenreIgnoreCase(genre);
+        if (books.isEmpty()) {
+            log.warn("Жанр не найден: {}", genre);
+            throw new GenreNotFoundException(genre);
+        }
+        return books;
     }
 }

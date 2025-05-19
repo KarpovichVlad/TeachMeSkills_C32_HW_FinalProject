@@ -1,6 +1,10 @@
 package org.example.teachmeskills_c32_hw_finalproject.service;
 
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.FileNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 @Service
 public class BookFileService {
 
+    private static final Logger logger = LoggerFactory.getLogger(BookFileService.class);
+
     private final Path ROOT_FILE_PATH = Paths.get("data");
     private final BookRepository bookRepository;
 
@@ -38,8 +44,14 @@ public class BookFileService {
     }
 
     public boolean uploadFile(Long bookId, MultipartFile file) {
-        if (!bookExists(bookId) || file.getOriginalFilename() == null)
+        if (!bookExists(bookId)) {
+            logger.error("Книга с ID {} не найдена", bookId);
+            throw new BookNotFoundException(bookId);
+        }
+        if (file.getOriginalFilename() == null) {
+            logger.error("Не указано имя файла при загрузке");
             return false;
+        }
 
         try {
             Path bookPath = getBookPath(bookId);
@@ -49,20 +61,31 @@ public class BookFileService {
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (IOException e) {
+            logger.error("Ошибка при загрузке файла для книги ID {}: {}", bookId, e.getMessage(), e);
             return false;
         }
     }
 
     public Optional<Resource> getFile(Long bookId, String fileName) {
-        if (!bookExists(bookId)) return Optional.empty();
+        if (!bookExists(bookId)) {
+            logger.error("Книга с ID {} не найдена", bookId);
+            throw new BookNotFoundException(bookId);
+        }
 
         Path path = getBookPath(bookId).resolve(fileName);
         Resource resource = new PathResource(path);
-        return resource.exists() ? Optional.of(resource) : Optional.empty();
+        if (!resource.exists()) {
+            logger.error("Файл '{}' не найден для книги с ID {}", fileName, bookId);
+            throw new FileNotFoundException(fileName);
+        }
+        return Optional.of(resource);
     }
 
     public List<String> getListOfFiles(Long bookId) throws IOException {
-        if (!bookExists(bookId)) return new ArrayList<>();
+        if (!bookExists(bookId)) {
+            logger.error("Книга с ID {} не найдена", bookId);
+            throw new BookNotFoundException(bookId);
+        }
 
         Path path = getBookPath(bookId);
         if (!Files.exists(path)) return new ArrayList<>();
@@ -72,14 +95,36 @@ public class BookFileService {
                     .filter(Files::isRegularFile)
                     .map(p -> p.getFileName().toString())
                     .collect(Collectors.toList());
+        } catch (IOException e) {
+            logger.error("Ошибка при чтении файлов книги ID {}: {}", bookId, e.getMessage(), e);
+            throw e;
         }
     }
 
     public boolean deleteFile(Long bookId, String fileName) {
-        if (!bookExists(bookId)) return false;
-
+        if (!bookExists(bookId)) {
+            logger.error("Книга с ID {} не найдена", bookId);
+            throw new BookNotFoundException(bookId);
+        }
         Path path = getBookPath(bookId).resolve(fileName);
         File file = path.toFile();
-        return file.exists() && file.delete();
+        if (!file.exists()) {
+            logger.error("Файл '{}' не найден для удаления (книга ID {})", fileName, bookId);
+            throw new FileNotFoundException(fileName);
+        }
+        boolean deleted = file.delete();
+        if (deleted) {
+            File folder = getBookPath(bookId).toFile();
+            String[] remainingFiles = folder.list((dir, name) -> new File(dir, name).isFile());
+            if (remainingFiles != null && remainingFiles.length == 0) {
+                boolean folderDeleted = folder.delete();
+                if (folderDeleted) {
+                    logger.info("Папка книги с ID {} удалена, так как в ней не осталось файлов", bookId);
+                } else {
+                    logger.warn("Не удалось удалить папку книги с ID {}, хотя она пуста", bookId);
+                }
+            }
+        }
+        return deleted;
     }
 }
