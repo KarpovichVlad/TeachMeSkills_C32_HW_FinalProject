@@ -5,12 +5,18 @@ import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewResponseDt
 import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.ReviewNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.UserAlreadyReviewedBookException;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Review;
+import org.example.teachmeskills_c32_hw_finalproject.model.users.Security;
 import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
 import org.example.teachmeskills_c32_hw_finalproject.repository.ReviewRepository;
+import org.example.teachmeskills_c32_hw_finalproject.repository.SecurityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,19 +24,40 @@ import java.util.Optional;
 @Service
 public class ReviewService {
 
+
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
+    private final SecurityRepository securityRepository;
     private static final Logger log = LoggerFactory.getLogger(ReviewService.class);
 
-    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository) {
+    @Autowired
+    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository, SecurityRepository securityRepository) {
         this.reviewRepository = reviewRepository;
         this.bookRepository = bookRepository;
+        this.securityRepository = securityRepository;
     }
 
+    @Transactional
     public Optional<ReviewDto> createReview(Review review) {
         if (!bookRepository.existsById(review.getBookId())) {
-            log.warn("Ошибка при попытки создать отзыв для несуществующей книги с ID {}", review.getBookId());
+            log.warn("Ошибка при попытке создать отзыв для несуществующей книги с ID {}", review.getBookId());
             throw new BookNotFoundException(review.getBookId());
+        }
+
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Security> securityOptional = securityRepository.findByLogin(login);
+
+        if (securityOptional.isEmpty()) {
+            log.error("Пользователь с логином {} не найден в базе security", login);
+            return Optional.empty();
+        }
+
+        Long userId = securityOptional.get().getUserId();
+        review.setUserId(userId);
+
+        if (reviewRepository.existsByUserIdAndBookId(userId, review.getBookId())) {
+            log.warn("Пользователь с ID {} уже оставил отзыв на книгу с ID {}", userId, review.getBookId());
+            throw new UserAlreadyReviewedBookException(userId, review.getBookId());
         }
 
         try {
@@ -40,14 +67,15 @@ public class ReviewService {
                     .id(saved.getId())
                     .text(saved.getText())
                     .rating(saved.getRating())
-                    .build()
-            );
+                    .build());
         } catch (Exception e) {
             log.error("Ошибка при создании отзыва: {}", e.getMessage(), e);
             return Optional.empty();
         }
     }
 
+
+    @Transactional
     public Optional<ReviewResponseDto> updateReview(Long bookId, Long reviewId, ReviewUpdateDto dto) {
         Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
@@ -78,6 +106,7 @@ public class ReviewService {
         }
     }
 
+    @Transactional
     public boolean deleteReview(Long bookId, Long reviewId) {
         Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {

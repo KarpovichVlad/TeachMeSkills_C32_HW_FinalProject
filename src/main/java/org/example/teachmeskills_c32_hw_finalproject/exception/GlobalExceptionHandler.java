@@ -1,10 +1,12 @@
 package org.example.teachmeskills_c32_hw_finalproject.exception;
 
+import io.jsonwebtoken.JwtException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.FileNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.GenreNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.ReviewAlreadyExistsException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.ReviewNotFoundException;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.UserAlreadyReviewedBookException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.EmailUserException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.LoginUsedException;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.UserNotFoundException;
@@ -12,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -76,6 +79,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleReviewAlreadyExists(ReviewAlreadyExistsException exception) {
         log.error(exception.getMessage());
         return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> accessDeniedExceptionHandler(AccessDeniedException exception) {
+        log.warn("Доступ запрещён: {}", exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.FORBIDDEN);
+    }
+    @ExceptionHandler(UserAlreadyReviewedBookException.class)
+    public ResponseEntity<?> userAlreadyReviewedBookHandler(UserAlreadyReviewedBookException exception) {
+        log.warn("Повторный отзыв отклонён: {}", exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = JwtException.class)
+    public ResponseEntity<?> jwtExceptionHandler(JwtException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     // Прочие исключения

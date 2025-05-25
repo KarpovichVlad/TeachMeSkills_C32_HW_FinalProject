@@ -1,5 +1,7 @@
 package org.example.teachmeskills_c32_hw_finalproject.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewResponseDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.review.ReviewUpdateDto;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/books/{bookId}/reviews")
 public class ReviewController {
@@ -36,7 +39,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<ReviewDto> createReview(
             @PathVariable Long bookId,
-            @RequestBody Review review
+            @RequestBody @Valid Review review
     ) {
         review.setBookId(bookId);
         Optional<ReviewDto> createdReview = reviewService.createReview(review);
@@ -53,7 +56,7 @@ public class ReviewController {
     public ResponseEntity<ReviewResponseDto> updateReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
-            @RequestBody ReviewUpdateDto dto
+            @RequestBody @Valid ReviewUpdateDto dto
     ) {
         Optional<ReviewResponseDto> updatedReview = reviewService.updateReview(bookId, reviewId, dto);
         if (updatedReview.isEmpty()) {

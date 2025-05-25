@@ -1,6 +1,9 @@
 package org.example.teachmeskills_c32_hw_finalproject.dto.book;
 
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,16 +16,17 @@ import org.springframework.stereotype.Component;
 @Builder
 @Component
 public class BookUpdateDto {
-    @Column(nullable = false)
+    @NotBlank
     private String title;
 
-    @Column(nullable = false)
+    @NotBlank
     private String author;
 
     private String genre;
 
-    @Column(length = 1000)
+    @Size(max = 1000)
     private String description;
 
+    @Min(value = 0)
     private Integer releaseYear;
 }

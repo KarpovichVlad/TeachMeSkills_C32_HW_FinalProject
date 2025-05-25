@@ -7,7 +7,10 @@ import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
 import org.example.teachmeskills_c32_hw_finalproject.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +19,20 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SecurityService securityService;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository) {
+    @Autowired
+    public UserService(UserRepository userRepository, SecurityService securityService) {
         this.userRepository = userRepository;
+        this.securityService = securityService;
     }
 
     public Optional<User> getUserById(Long id) {
+        if (!securityService.canAccessUser(id)) {
+            throw new AccessDeniedException("Access denied by user ID: " + id);
+        }
+
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             log.warn("Пользователь с ID {} не найден", id);
@@ -43,7 +53,12 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public Optional<UserDto> updateUser(Long id, UserUpdateDto dto) {
+        if (!securityService.canAccessUser(id)) {
+            throw new AccessDeniedException("Access denied by user ID: " + id);
+        }
+
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
             log.warn("Пользователь с ID {} не найден для обновления", id);
@@ -66,7 +81,11 @@ public class UserService {
         }
     }
 
+    @Transactional
     public boolean deleteUser(Long id) {
+        if (!securityService.canAccessUser(id)) {
+            throw new AccessDeniedException("Access denied by user ID: " + id);
+        }
         if (!userRepository.existsById(id)) {
             log.warn("Пользователь с ID {} не найден для удаления", id);
             throw new UserNotFoundException(id);

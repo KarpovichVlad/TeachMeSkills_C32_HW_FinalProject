@@ -1,5 +1,7 @@
 package org.example.teachmeskills_c32_hw_finalproject.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookCreateDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.book.BookUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.books.Book;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/book")
 public class BookController {
@@ -28,7 +31,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody BookCreateDto bookDto) {
+    public ResponseEntity<Book> createBook(@RequestBody @Valid BookCreateDto bookDto) {
         Optional<Book> createdBook = bookService.createBook(bookDto);
         if (createdBook.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -48,7 +51,7 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(
             @PathVariable Long id,
-            @RequestBody BookUpdateDto dto
+            @RequestBody @Valid BookUpdateDto dto
     ) {
         Optional<Book> bookUpdated = bookService.updateBook(id, dto);
         if (bookUpdated.isEmpty()) {

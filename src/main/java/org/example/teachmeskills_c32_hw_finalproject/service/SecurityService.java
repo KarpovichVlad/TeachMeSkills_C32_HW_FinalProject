@@ -1,5 +1,6 @@
 package org.example.teachmeskills_c32_hw_finalproject.service;
 
+import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.AuthRequestDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.RegistrationRequestDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.EmailUserException;
@@ -9,8 +10,11 @@ import org.example.teachmeskills_c32_hw_finalproject.model.users.Security;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
 import org.example.teachmeskills_c32_hw_finalproject.repository.SecurityRepository;
 import org.example.teachmeskills_c32_hw_finalproject.repository.UserRepository;
+import org.example.teachmeskills_c32_hw_finalproject.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +25,15 @@ public class SecurityService {
 
     private final SecurityRepository securityRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public SecurityService(SecurityRepository securityRepository, UserRepository userRepository) {
+    public SecurityService(SecurityRepository securityRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.securityRepository = securityRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -52,11 +60,12 @@ public class SecurityService {
         User savedUser = userRepository.save(user);
 
         // 2. Создание и сохранение Security
-        Security security = new Security();
-        security.setLogin(requestDto.getLogin());
-        security.setPassword(requestDto.getPassword());
-        security.setRole(Role.USER);
-        security.setUserId(savedUser.getId());
+            Security security = Security.builder()
+                    .login(requestDto.getLogin())
+                    .password(passwordEncoder.encode(requestDto.getPassword()))
+                    .role(Role.USER)
+                    .userId(savedUser.getId())
+                    .build();
 
         securityRepository.save(security);
 
@@ -80,5 +89,24 @@ public class SecurityService {
                 throw e;
             }
         }
+    }
+
+    public boolean canAccessUser(Long userId) {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Security> securityOptional = securityRepository.findByLogin(login);
+        if (securityOptional.isEmpty()) {
+            return false;
+        }
+        Security security = securityOptional.get();
+        return security.getRole().equals(Role.ADMIN) || security.getUserId().equals(userId);
+    }
+
+    public Optional<String> generateToken(AuthRequestDto authRequestDto) {
+        Optional<Security> securityOptional = securityRepository.findByLogin(authRequestDto.getLogin());
+
+        if (securityOptional.isPresent() && passwordEncoder.matches(authRequestDto.getPassword(), securityOptional.get().getPassword())) {
+            return jwtUtil.generateJwtToken(authRequestDto.getLogin());
+        }
+        return Optional.empty();
     }
 }

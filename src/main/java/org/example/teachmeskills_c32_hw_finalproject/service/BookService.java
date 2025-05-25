@@ -9,7 +9,9 @@ import org.example.teachmeskills_c32_hw_finalproject.model.books.Book;
 import org.example.teachmeskills_c32_hw_finalproject.repository.BookRepository;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +22,12 @@ public class BookService {
     private final BookRepository bookRepository;
     private static final Logger log = LoggerFactory.getLogger(BookService.class);
 
+    @Autowired
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
+    @Transactional
     public Optional<Book> createBook(BookCreateDto dto) {
         try {
             Book book = Book.builder()
@@ -43,6 +47,7 @@ public class BookService {
 
 
     @LogExecutionTime
+    @Transactional
     public Optional<Book> updateBook(Long id, BookUpdateDto dto) {
         Optional<Book> bookOpt = bookRepository.findById(id);
         if (bookOpt.isEmpty()) {
@@ -75,6 +80,7 @@ public class BookService {
         return book;
     }
 
+    @Transactional
     public boolean deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
             log.warn("Книга с ID {} не найдена для удаления", id);

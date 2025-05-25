@@ -1,7 +1,9 @@
 package org.example.teachmeskills_c32_hw_finalproject.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserUpdateDto;
 import org.example.teachmeskills_c32_hw_finalproject.model.users.User;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/user")
 @Tag(name = "User Controller", description = "Управление пользователями")
@@ -44,7 +47,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable Long id,
-            @RequestBody UserUpdateDto dto
+            @RequestBody @Valid UserUpdateDto dto
     ) {
         Optional<UserDto> userUpdated = userService.updateUser(id, dto);
         if (userUpdated.isEmpty()) {

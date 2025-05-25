@@ -2,6 +2,8 @@ package org.example.teachmeskills_c32_hw_finalproject.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.AuthRequestDto;
+import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.AuthResponseDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.securiy.RegistrationRequestDto;
 import org.example.teachmeskills_c32_hw_finalproject.dto.user.UserDto;
 import org.example.teachmeskills_c32_hw_finalproject.exception.userex.EmailUserException;
@@ -40,5 +42,14 @@ public class SecurityController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(userDto.get(), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/token")
+    public ResponseEntity<AuthResponseDto> generateToken(@RequestBody AuthRequestDto authRequestDto){
+        Optional<String> token = securityService.generateToken(authRequestDto);
+        if (token.isPresent()) {
+            return new ResponseEntity<>(new AuthResponseDto(token.get()), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }
