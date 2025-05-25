@@ -73,20 +73,6 @@ create table public.books
 alter table public.books
     owner to dog_101;
 
--- Таблица файлов книг (PDF, EPUB и т.д.)
-create table public.book_files
-(
-    id        bigint default nextval('book_files_id_seq'::regclass) not null
-        primary key,
-    book_id   bigint
-        unique
-        references public.books
-            on delete cascade,
-    file_name varchar(255)                                          not null
-);
-
-alter table public.book_files
-    owner to dog_101;
 
 
 

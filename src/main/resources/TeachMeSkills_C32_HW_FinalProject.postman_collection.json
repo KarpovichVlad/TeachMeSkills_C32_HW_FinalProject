@@ -1,0 +1,532 @@
+{
+	"info": {
+		"_postman_id": "c3499c36-7a34-4000-92ba-10c156017aab",
+		"name": "TeachMeSkills_C32_HW_FinalProject",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43347032",
+		"_collection_link": "https://lunar-equinox-781852.postman.co/workspace/Team-Workspace~fc781c81-0f71-45ef-8510-b47197ea2463/collection/43347032-c3499c36-7a34-4000-92ba-10c156017aab?action=share&source=collection_link&creator=43347032"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Получить пользователя",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удалить пользователя",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить пользователя",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"fрпапнрl\",\r\n    \"secondName\": \"dпрлkfl\",\r\n    \"age\": 76,\r\n    \"sex\": \"M\",\r\n    \"telephoneNumber\": \"777756789009\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить всех пользователей",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "Получить файл",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/file/{fileName}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"file",
+								"{fileName}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удалить файл",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Создать файл",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n    \"firstname\": \"dkl\",\r\n    \"secondName\": \"dl\",\r\n    \"age\": 19,\r\n    \"email\": \"кеа@gmail.com\",\r\n    \"sex\": \"M\",\r\n    \"telephoneNumber\": \"123456789009\"\r\n    \r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/file",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить список файлов",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 17,\r\n    \"firstname\": \"dkfl\",\r\n    \"secondName\": \"dkfl\",\r\n    \"age\": 86,\r\n    \"email\": \"hdy@gmail.com\",\r\n    \"sex\": \"M\",\r\n    \"telephoneNumber\": \"777756789009\",\r\n    \"created\": 1742472348416,\r\n    \"updated\": 1742472348415,\r\n    \"securityInfo\": null,\r\n    \"deleted\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/file/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"file",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "Удалить отзыв",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/reviews/{reviewId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"reviews",
+								"{reviewId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Создать отзыв",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n    \"firstname\": \"dkl\",\r\n    \"secondName\": \"dl\",\r\n    \"age\": 19,\r\n    \"email\": \"кеа@gmail.com\",\r\n    \"sex\": \"M\",\r\n    \"telephoneNumber\": \"123456789009\"\r\n    \r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/reviews",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить отзыв",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 17,\r\n    \"firstname\": \"dkfl\",\r\n    \"secondName\": \"dkfl\",\r\n    \"age\": 86,\r\n    \"email\": \"hdy@gmail.com\",\r\n    \"sex\": \"M\",\r\n    \"telephoneNumber\": \"777756789009\",\r\n    \"created\": 1742472348416,\r\n    \"updated\": 1742472348415,\r\n    \"securityInfo\": null,\r\n    \"deleted\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/reviews/{reviewId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"reviews",
+								"{reviewId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить отзывы",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/books/{bookId}/reviews/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"{bookId}",
+								"reviews",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "Получить книгу",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/book/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"book",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удалить книгу",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/book/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"book",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Создать книгу",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"животные\",\r\n    \"author\": \"Высоцкий\",\r\n    \"genre\": \"комедия\",\r\n    \"description\": \"книга о том как живут животные\",\r\n    \"releaseYear\": 1952\r\n    \r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить книгу",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"cjkfdтные\",\r\n    \"author\": \"cxhdjkоцкий\",\r\n    \"genre\": \"сы\",\r\n    \"description\": \"книга о том как живут животные\",\r\n    \"releaseYear\": 2957\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/book/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"book",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить все книги",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/book/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"book",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить книги по жанру",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/book/list/снанп",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"book",
+								"list",
+								"снанп"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Security",
+			"item": [
+				{
+					"name": "Зарегистрировать  пользователя",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"firstname\": \"xdfgh\",\r\n\"secondName\": \"ijhgfg\",\r\n\"age\": 45,\r\n\"email\": \"sdf@ail.com\",\r\n \"sex\": \"М\",\r\n\"telephoneNumber\": \"123456789999\",\r\n\"login\": \"ivan123\",\r\n\"password\": \"secrd123\"   \r\n}  ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/security/registration",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"security",
+								"registration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Создать токен",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"login\": \"nn123\",\r\n  \"password\": \"secrd123\"\r\n}\r\n  ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/security/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"security",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
