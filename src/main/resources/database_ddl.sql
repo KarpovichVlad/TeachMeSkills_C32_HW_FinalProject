@@ -58,6 +58,11 @@ create table public.reviews
 alter table public.reviews
     owner to dog_101;
 
+-- Сиквенс книг
+create sequence public.books_id_seq;
+
+alter sequence public.books_id_seq owner to dog_101;
+
 -- Таблица книг
 create table public.books
 (

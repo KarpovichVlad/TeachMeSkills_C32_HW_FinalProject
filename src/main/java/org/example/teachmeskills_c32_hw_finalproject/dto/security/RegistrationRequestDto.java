@@ -1,19 +1,19 @@
-package org.example.teachmeskills_c32_hw_finalproject.dto.securiy;
+package org.example.teachmeskills_c32_hw_finalproject.dto.security;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
+@Builder
 public class RegistrationRequestDto {
 
     @NotNull

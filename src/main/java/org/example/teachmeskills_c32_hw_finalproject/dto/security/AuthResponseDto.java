@@ -1,4 +1,4 @@
-package org.example.teachmeskills_c32_hw_finalproject.dto.securiy;
+package org.example.teachmeskills_c32_hw_finalproject.dto.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

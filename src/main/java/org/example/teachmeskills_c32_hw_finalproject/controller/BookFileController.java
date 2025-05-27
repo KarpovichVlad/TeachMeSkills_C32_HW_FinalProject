@@ -1,5 +1,10 @@
 package org.example.teachmeskills_c32_hw_finalproject.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.example.teachmeskills_c32_hw_finalproject.exception.bookex.BookNotFoundException;
 import org.example.teachmeskills_c32_hw_finalproject.service.BookFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -15,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/books/{bookId}/file")
+@Tag(name = "Book File Controller", description = "Manage book file upload, download, and deletion")
 public class BookFileController {
 
     private final BookFileService bookFileService;
@@ -24,6 +30,11 @@ public class BookFileController {
         this.bookFileService = bookFileService;
     }
 
+    @Operation(summary = "Upload a file for a specific book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "File uploaded successfully"),
+            @ApiResponse(responseCode = "409", description = "Conflict occurred during file upload")
+    })
     @PostMapping
     public ResponseEntity<HttpStatus> uploadFile(
             @PathVariable Long bookId,
@@ -33,19 +44,27 @@ public class BookFileController {
         return new ResponseEntity<>(result ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
+    @Operation(summary = "Get a list of uploaded files for a specific book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of files returned successfully (empty list if no files)"),
+            @ApiResponse(responseCode = "404", description = "Book not found with the given ID"),
+            @ApiResponse(responseCode = "500", description = "Internal server error while retrieving files")
+    })
     @GetMapping("/list")
     public ResponseEntity<List<String>> getFiles(@PathVariable Long bookId) {
         try {
             List<String> files = bookFileService.getListOfFiles(bookId);
-            if (files.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
             return new ResponseEntity<>(files, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @Operation(summary = "Download a specific file for a book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "File downloaded successfully"),
+            @ApiResponse(responseCode = "404", description = "File not found")
+    })
     @GetMapping("/{fileName}")
     public ResponseEntity<Resource> downloadFile(
             @PathVariable Long bookId,
@@ -60,6 +79,11 @@ public class BookFileController {
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @Operation(summary = "Delete a specific file for a book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "File deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "File not found")
+    })
     @DeleteMapping("/{fileName}")
     public ResponseEntity<HttpStatus> deleteFile(
             @PathVariable Long bookId,

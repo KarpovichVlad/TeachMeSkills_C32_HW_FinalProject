@@ -1,6 +1,5 @@
 package org.example.teachmeskills_c32_hw_finalproject.security;
 
-
 import org.example.teachmeskills_c32_hw_finalproject.model.users.Security;
 import org.example.teachmeskills_c32_hw_finalproject.repository.SecurityRepository;
 import org.springframework.beans.factory.annotation.Autowired;

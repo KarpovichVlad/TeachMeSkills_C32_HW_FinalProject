@@ -40,7 +40,7 @@ public class BookService {
 
             return Optional.of(bookRepository.save(book));
         } catch (Exception e) {
-            log.error("Ошибка при создании книги: {}", e.getMessage());
+            log.error("Error when creating a book: {}", e.getMessage());
             return Optional.empty();
         }
     }
@@ -51,7 +51,7 @@ public class BookService {
     public Optional<Book> updateBook(Long id, BookUpdateDto dto) {
         Optional<Book> bookOpt = bookRepository.findById(id);
         if (bookOpt.isEmpty()) {
-            log.warn("Книга с ID {} не найдена для обновления", id);
+            log.warn("The book with the ID {} could not be found for updating", id);
             throw new BookNotFoundException(id);
         }
 
@@ -66,7 +66,7 @@ public class BookService {
             Book updated = bookRepository.save(book);
             return Optional.of(updated);
         } catch (Exception e) {
-            log.error("Ошибка при обновлении книги: {}", e.getMessage());
+            log.error("Error updating the book: {}", e.getMessage());
             return Optional.empty();
         }
     }
@@ -74,7 +74,7 @@ public class BookService {
     public Optional<Book> getBookById(Long id) {
         Optional<Book> book = bookRepository.findById(id);
         if (book.isEmpty()) {
-            log.warn("Книга с ID {} не найдена", id);
+            log.warn("Book with ID {} not found", id);
             throw new BookNotFoundException(id);
         }
         return book;
@@ -83,13 +83,13 @@ public class BookService {
     @Transactional
     public boolean deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
-            log.warn("Книга с ID {} не найдена для удаления", id);
+            log.warn("The book with the ID {} could not be found for deletion", id);
             throw new BookNotFoundException(id);
         }
         try {
             bookRepository.deleteById(id);
         } catch (Exception e) {
-            log.error("Ошибка при удалении книги с ID {}: {}", id, e.getMessage());
+            log.error("Error when deleting a book with an ID {}: {}", id, e.getMessage());
             return false;
         }
         return !bookRepository.existsById(id);
@@ -103,7 +103,7 @@ public class BookService {
     public List<Book> getBooksByGenre(String genre) {
         List<Book> books = bookRepository.findByGenreIgnoreCase(genre);
         if (books.isEmpty()) {
-            log.warn("Жанр не найден: {}", genre);
+            log.warn("Genre not found: {}", genre);
             throw new GenreNotFoundException(genre);
         }
         return books;

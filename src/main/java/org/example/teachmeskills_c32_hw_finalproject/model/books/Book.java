@@ -1,6 +1,5 @@
 package org.example.teachmeskills_c32_hw_finalproject.model.books;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +30,7 @@ public class Book {
     @Column(nullable = false)
     private String author;
 
+    @Column(length = 100)
     private String genre;
 
     @Column(length = 1000)

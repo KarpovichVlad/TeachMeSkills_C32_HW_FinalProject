@@ -83,12 +83,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> accessDeniedExceptionHandler(AccessDeniedException exception) {
-        log.warn("Доступ запрещён: {}", exception.getMessage());
+        log.warn("Access is denied: {}", exception.getMessage());
         return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.FORBIDDEN);
     }
     @ExceptionHandler(UserAlreadyReviewedBookException.class)
     public ResponseEntity<?> userAlreadyReviewedBookHandler(UserAlreadyReviewedBookException exception) {
-        log.warn("Повторный отзыв отклонён: {}", exception.getMessage());
+        log.warn("Repeated review rejected: {}", exception.getMessage());
         return new ResponseEntity<>(generateResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(value = JwtException.class)
@@ -101,6 +101,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> defaultExceptionHandler(Exception exception) {
         log.error("Unexpected error: {}", exception.getMessage(), exception);
-        return new ResponseEntity<>(generateResponse("Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже."), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(generateResponse("An unexpected error has occurred. Please try again later."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

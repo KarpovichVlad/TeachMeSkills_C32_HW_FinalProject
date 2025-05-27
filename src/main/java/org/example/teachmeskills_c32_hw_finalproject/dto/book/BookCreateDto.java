@@ -19,6 +19,7 @@ public class BookCreateDto {
     @NotBlank
     private String author;
 
+    @Size(max = 100)
     private String genre;
 
     @Size(max = 1000)

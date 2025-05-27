@@ -35,7 +35,7 @@ public class UserService {
 
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            log.warn("Пользователь с ID {} не найден", id);
+            log.warn("User with ID {} not found", id);
             throw new UserNotFoundException(id);
         }
         return user;
@@ -61,7 +61,7 @@ public class UserService {
 
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
-            log.warn("Пользователь с ID {} не найден для обновления", id);
+            log.warn("The user with the ID {} was not found for updating", id);
             throw new UserNotFoundException(id);
         }
 
@@ -76,7 +76,7 @@ public class UserService {
             User updated = userRepository.save(user);
             return Optional.of(convertToDto(updated));
         } catch (Exception e) {
-            log.error("Ошибка при обновлении пользователя: {}", e.getMessage());
+            log.error("Error when updating the user: {}", e.getMessage());
             return Optional.empty();
         }
     }
@@ -87,13 +87,13 @@ public class UserService {
             throw new AccessDeniedException("Access denied by user ID: " + id);
         }
         if (!userRepository.existsById(id)) {
-            log.warn("Пользователь с ID {} не найден для удаления", id);
+            log.warn("The user with ID {} was not found for deletion", id);
             throw new UserNotFoundException(id);
         }
         try {
             userRepository.deleteById(id);
         } catch (Exception e) {
-            log.error("Ошибка при удалении пользователя с ID {}: {}", id, e.getMessage());
+            log.error("Error when deleting a user with an ID {}: {}", id, e.getMessage());
             return false;
         }
         return !userRepository.existsById(id);

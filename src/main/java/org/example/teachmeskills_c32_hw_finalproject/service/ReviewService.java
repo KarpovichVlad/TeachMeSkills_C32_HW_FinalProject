@@ -40,7 +40,7 @@ public class ReviewService {
     @Transactional
     public Optional<ReviewDto> createReview(Review review) {
         if (!bookRepository.existsById(review.getBookId())) {
-            log.warn("Ошибка при попытке создать отзыв для несуществующей книги с ID {}", review.getBookId());
+            log.warn("An attempt to create a review for a non-existent book with the ID {}", review.getBookId());
             throw new BookNotFoundException(review.getBookId());
         }
 
@@ -48,7 +48,7 @@ public class ReviewService {
         Optional<Security> securityOptional = securityRepository.findByLogin(login);
 
         if (securityOptional.isEmpty()) {
-            log.error("Пользователь с логином {} не найден в базе security", login);
+            log.error("The user with the username {} was not found in the security database", login);
             return Optional.empty();
         }
 
@@ -56,7 +56,7 @@ public class ReviewService {
         review.setUserId(userId);
 
         if (reviewRepository.existsByUserIdAndBookId(userId, review.getBookId())) {
-            log.warn("Пользователь с ID {} уже оставил отзыв на книгу с ID {}", userId, review.getBookId());
+            log.warn("The user with the ID {} has already left a review for the book with the ID {}", userId, review.getBookId());
             throw new UserAlreadyReviewedBookException(userId, review.getBookId());
         }
 
@@ -69,7 +69,7 @@ public class ReviewService {
                     .rating(saved.getRating())
                     .build());
         } catch (Exception e) {
-            log.error("Ошибка при создании отзыва: {}", e.getMessage(), e);
+            log.error("Error when creating a review: {}", e.getMessage(), e);
             return Optional.empty();
         }
     }
@@ -79,13 +79,13 @@ public class ReviewService {
     public Optional<ReviewResponseDto> updateReview(Long bookId, Long reviewId, ReviewUpdateDto dto) {
         Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
-            log.error("Отзыв с ID {} не найден при попытке обновления", reviewId);
+            log.warn("Review with ID {} not found when trying to update", reviewId);
             throw new ReviewNotFoundException(reviewId);
         }
 
         Review review = reviewOpt.get();
         if (!review.getBookId().equals(bookId)) {
-            log.error("Книга с ID {} не соответствует отзыву с ID {}", bookId, reviewId);
+            log.warn("The book with the ID {} does not match the review with the ID {}", bookId, reviewId);
             throw new BookNotFoundException(bookId);
         }
 
@@ -101,7 +101,7 @@ public class ReviewService {
                             .build()
             );
         } catch (Exception e) {
-            log.error("Ошибка при обновлении отзыва с ID {}: {}", reviewId, e.getMessage(), e);
+            log.error("Error updating the review with the ID {}: {}", reviewId, e.getMessage(), e);
             return Optional.empty();
         }
     }
@@ -110,20 +110,20 @@ public class ReviewService {
     public boolean deleteReview(Long bookId, Long reviewId) {
         Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
         if (reviewOpt.isEmpty()) {
-            log.error("Попытка удалить несуществующий отзыв с ID {}", reviewId);
+            log.warn("Attempt to delete a non-existent review with an ID {}", reviewId);
             throw new ReviewNotFoundException(reviewId);
         }
 
         Review review = reviewOpt.get();
         if (!review.getBookId().equals(bookId)) {
-            log.error("Отзыв с ID {} не принадлежит книге с ID {}", reviewId, bookId);
+            log.warn("The review with the ID {} does not belong to the book with the ID {}", reviewId, bookId);
             throw new ReviewNotFoundException(reviewId);
         }
 
         try {
             reviewRepository.deleteById(reviewId);
         } catch (Exception e) {
-            log.error("Ошибка при удалении отзыва с ID {}: {}", reviewId, e.getMessage(), e);
+            log.error("Error when deleting a review with an ID {}: {}", reviewId, e.getMessage(), e);
             return false;
         }
         return !reviewRepository.existsById(reviewId);
@@ -131,7 +131,7 @@ public class ReviewService {
 
     public List<Review> getReviewsByBookId(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
-            log.error("Попытка получить отзывы для несуществующей книги с ID {}", bookId);
+            log.warn("Trying to get reviews for a non-existent book with an ID {}", bookId);
             throw new BookNotFoundException(bookId);
         }
         return reviewRepository.findAllByBookId(bookId);

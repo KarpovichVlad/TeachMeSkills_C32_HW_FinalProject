@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,6 +37,8 @@ public class User {
     @Column(name = "second_name", nullable = false)
     private String secondName;
 
+    @Min(0)
+    @Max(120)
     private Integer age;
 
     @Column(nullable = false, unique = true)
